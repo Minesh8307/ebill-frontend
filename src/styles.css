@@ -1,132 +1,61 @@
-/* Global Styles */
 body {
   margin: 0;
   font-family: "Poppins", sans-serif;
-  background: linear-gradient(135deg, #f9fafb, #e0e7ff);
+  background: linear-gradient(135deg,#e0f2fe,#dbeafe);
   min-height: 100vh;
+  color:#111827;
 }
 
-/* Glass Effect */
 .glass {
-  background: rgba(255, 255, 255, 0.3);
+  background: rgba(255,255,255,0.4);
   backdrop-filter: blur(15px);
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
   border-radius: 20px;
-  padding: 2rem;
-  margin: 2rem auto;
-  text-align: center;
-  max-width: 500px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+  padding:2rem;
+  max-width:600px;
+  margin:4rem auto;
+  text-align:center;
 }
 
-/* Navbar */
 .navbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(20px);
-  padding: 1rem 2rem;
-  position: sticky;
-  top: 0;
-}
-
-.navbar .logo {
-  font-weight: 700;
-  font-size: 1.4rem;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  background:rgba(255,255,255,0.2);
+  backdrop-filter:blur(10px);
+  padding:1rem 2rem;
+  position:sticky;
+  top:0;
 }
 
 .nav-links a {
-  margin: 0 10px;
-  text-decoration: none;
-  color: #1f2937;
-  font-weight: 500;
+  margin:0 10px;
+  text-decoration:none;
+  color:#1f2937;
+  font-weight:500;
 }
 
 .logout-btn {
-  background: #ef4444;
-  color: white;
-  border: none;
-  padding: 6px 12px;
-  border-radius: 6px;
-  cursor: pointer;
+  background:#ef4444;
+  color:#fff;
+  border:none;
+  padding:6px 12px;
+  border-radius:6px;
+  cursor:pointer;
 }
 
-/* Buttons */
-.btn-primary {
-  background: #007bff;
-  color: white;
-  border: none;
-  padding: 12px 20px;
-  border-radius: 12px;
-  cursor: pointer;
-  transition: 0.3s;
+.btn-primary, .btn-green {
+  display:inline-block;
+  margin:10px;
+  padding:12px 25px;
+  border-radius:12px;
+  color:#fff;
+  text-decoration:none;
+  font-weight:600;
 }
+.btn-primary {background:#3b82f6;}
+.btn-green {background:#22c55e;}
+.btn-primary:hover {background:#2563eb;}
+.btn-green:hover {background:#16a34a;}
 
-.btn-primary:hover {
-  background: #2563eb;
-}
-
-/* Dashboard Cards */
-.card-container {
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-}
-
-.big-card {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.5rem;
-  font-weight: 600;
-  width: 200px;
-  height: 150px;
-  border-radius: 20px;
-  color: white;
-  text-decoration: none;
-}
-
-.big-card.blue {
-  background: #3b82f6;
-}
-
-.big-card.green {
-  background: #22c55e;
-}
-
-/* Auth Pages */
-.auth-container input {
-  width: 90%;
-  margin: 10px auto;
-  padding: 10px;
-  border: 1px solid #d1d5db;
-  border-radius: 8px;
-}
-
-.auth-container button {
-  width: 95%;
-}
-
-/* Loader */
-.loader {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-top: 100px;
-}
-
-.spinner {
-  width: 40px;
-  height: 40px;
-  border: 5px solid #ddd;
-  border-top-color: #007bff;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
 
