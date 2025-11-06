@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { addSale, getSales } from "../services/salesService";
-import { getItems } from "../services/inventoryService"; // We still need this
-import { useAuth } from "../context/AuthContext"; // Import useAuth
+// Import our NEW function and remove addSale
+import { processSaleAndUpdateInventory, getSales } from "../services/salesService";
+import { getItems } from "../services/inventoryService";
+import { useAuth } from "../context/AuthContext";
 
 export default function Sell() {
   const [sales, setSales] = useState([]);
@@ -9,12 +10,14 @@ export default function Sell() {
   const [customer, setCustomer] = useState("");
   const [item, setItem] = useState("");
   const [qty, setQty] = useState(1);
-  const { currentUser } = useAuth(); // Get the logged-in user
+  const [error, setError] = useState(""); // For showing errors
+  const [loading, setLoading] = useState(false); // For disabling button
+  const { currentUser } = useAuth();
 
   const fetchData = async () => {
     if (!currentUser) return;
-    setSales(await getSales(currentUser.uid)); // Pass userId
-    setInventory(await getItems(currentUser.uid)); // Pass userId
+    setSales(await getSales(currentUser.uid));
+    setInventory(await getItems(currentUser.uid));
   };
 
   useEffect(() => {
@@ -23,58 +26,91 @@ export default function Sell() {
 
   const handleSell = async (e) => {
     e.preventDefault();
-    if (!customer || !item || !currentUser) return alert("Please fill all fields!");
+    setError("");
+    if (!customer || !item || !currentUser) return setError("Please fill all fields!");
     
     const selected = inventory.find((i) => i.name === item);
-    if (!selected) return alert("Item not found in inventory!");
+    if (!selected) return setError("Item not found in inventory!");
     
     const numQty = Number(qty);
-    if (numQty <= 0) return alert("Quantity must be greater than 0");
-    if (numQty > selected.quantity) return alert("Not enough stock!");
+    if (numQty <= 0) return setError("Quantity must be greater than 0");
+    if (numQty > selected.quantity) return setError("Not enough stock!");
 
-    const total = numQty * selected.price;
+    setLoading(true); // Disable button
+
+    // --- THIS IS THE NEW LOGIC ---
+    // 1. Calculate the new quantity
+    const newQuantity = selected.quantity - numQty;
+
+    // 2. Define the sale object
     const sale = {
       customerName: customer,
       item,
       quantity: numQty,
-      total,
-      date: new Date().toLocaleString("en-IN"), // Indian locale date
+      total: numQty * selected.price,
+      date: new Date().toLocaleString("en-IN"),
     };
 
-    await addSale(sale, currentUser.uid); // Pass userId
+    try {
+      // 3. Call the new transaction function
+      await processSaleAndUpdateInventory(
+        sale,
+        currentUser.uid,
+        selected.id, // Pass the item's unique ID
+        newQuantity  // Pass the new calculated quantity
+      );
+      
+      alert("Sale recorded successfully!");
+      
+      // 4. Reset the form
+      setCustomer("");
+      setItem("");
+      setQty(1);
+      fetchData(); // This will refresh both sales AND inventory list
+
+    } catch (err) {
+      console.error(err);
+      setError(`Sale failed: ${err.message}`);
+    }
     
-    // NOTE: We are NOT updating the inventory quantity here.
-    // This is a complex operation (a "transaction")
-    // For now, we just record the sale.
-    
-    alert("Sale recorded!");
-    setCustomer("");
-    setItem("");
-    setQty(1);
-    fetchData(); // Refresh sales and inventory
+    setLoading(false); // Re-enable button
   };
 
   return (
     <div className="glass">
       <h2>Sell Items</h2>
-      {/* Sell Form */}
+      {error && <p className="error">{error}</p>}
+      
       <form onSubmit={handleSell} className="inventory-form">
-        <input placeholder="Customer Name" value={customer}
+        <input 
+          placeholder="Customer Name" 
+          value={customer}
           onChange={(e) => setCustomer(e.target.value)} required />
+        
         <select value={item} onChange={(e) => setItem(e.target.value)} required>
           <option value="">Select Item</option>
-          {inventory.map((i) => (
-            <option key={i.id} value={i.name}>
-              {i.name} (Stock: {i.quantity}, Price: ₹{i.price})
-            </option>
+          {inventory
+            .filter(i => i.quantity > 0) // Only show items in stock
+            .map((i) => (
+              <option key={i.id} value={i.name}>
+                {i.name} (Stock: {i.quantity}, Price: ₹{i.price})
+              </option>
           ))}
         </select>
-        <input type="number" placeholder="Quantity" min="1"
-          value={qty} onChange={(e) => setQty(e.target.value)} required />
-        <button type="submit" className="btn-green">Sell</button>
+        
+        <input 
+          type="number" 
+          placeholder="Quantity" 
+          min="1"
+          max={inventory.find(i => i.name === item)?.quantity} // Set max to stock
+          value={qty} 
+          onChange={(e) => setQty(e.target.value)} required />
+        
+        <button type="submit" className="btn-green" disabled={loading}>
+          {loading ? "Processing..." : "Sell"}
+        </button>
       </form>
 
-      {/* Sales Records Table */}
       <h3 style={{ marginTop: "2rem" }}>Sales Records</h3>
       <table className="table">
         <thead>
