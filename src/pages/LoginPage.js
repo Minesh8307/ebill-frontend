@@ -1,7 +1,7 @@
 import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../config/firebaseConfig";
-import { Link, useNavigate } from "react-router-dom";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -9,8 +9,9 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const handleLogin = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
     try {
       await signInWithEmailAndPassword(auth, email, password);
       navigate("/dashboard");
@@ -20,10 +21,10 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="glass">
+    <div className="form-container glass">
       <h2>Login</h2>
-      {error && <p style={{ color: "red" }}>{error}</p>}
-      <form onSubmit={handleLogin}>
+      {error && <p className="error">{error}</p>}
+      <form onSubmit={handleSubmit}>
         <input
           type="email"
           placeholder="Email"
@@ -40,10 +41,9 @@ export default function LoginPage() {
         />
         <button type="submit" className="btn-primary">Login</button>
       </form>
-      <p>New user? <Link to="/signup">Create an account</Link></p>
+      <p>
+        Need an account? <Link to="/signup">Sign Up</Link>
+      </p>
     </div>
   );
 }
-
-
-
