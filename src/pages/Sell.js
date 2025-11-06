@@ -1,63 +1,105 @@
-import React, { useEffect, useState } from "react";
-import { getItems, updateItem } from "../services/inventoryService";
-import { addSale } from "../services/salesService";
-import BillCard from "../components/BillCard";
+import React, { useState, useEffect } from "react";
+import { addSale, getSales } from "../services/salesService";
+import { getItems, addItem } from "../services/inventoryService";
 
-function Sell() {
-  const [items, setItems] = useState([]);
+export default function Sell() {
+  const [sales, setSales] = useState([]);
+  const [inventory, setInventory] = useState([]);
   const [customer, setCustomer] = useState("");
-  const [selected, setSelected] = useState([]);
-  const [bill, setBill] = useState(null);
+  const [item, setItem] = useState("");
+  const [qty, setQty] = useState(1);
 
-  useEffect(() => {
-    (async () => setItems(await getItems()))();
-  }, []);
-
-  const handleAddItem = (item) => {
-    setSelected([...selected, { ...item, quantity: 1 }]);
+  const fetchData = async () => {
+    setSales(await getSales());
+    setInventory(await getItems());
   };
 
-  const handleSell = async () => {
-    let total = 0;
-    selected.forEach((i) => (total += i.price * i.quantity));
+  useEffect(() => {
+    fetchData();
+  }, []);
 
-    const saleData = {
+  const handleSell = async () => {
+    const selected = inventory.find((i) => i.name === item);
+    if (!selected) return alert("Item not found in inventory!");
+    if (qty > selected.quantity) return alert("Not enough stock!");
+
+    const total = qty * selected.price;
+
+    const sale = {
       customerName: customer,
-      date: new Date().toLocaleString(),
-      items: selected,
+      item,
+      quantity: qty,
       total,
+      date: new Date().toLocaleString(),
     };
 
-    await addSale(saleData);
+    await addSale(sale);
 
-    // Update inventory quantities
-    for (const i of selected) {
-      const found = items.find((x) => x.id === i.id);
-      if (found) await updateItem(i.id, { quantity: found.quantity - i.quantity });
-    }
-
-    setBill(saleData);
+    alert("Sale recorded successfully!");
+    setCustomer("");
+    setItem("");
+    setQty(1);
+    fetchData();
   };
 
   return (
-    <div className="sell glass">
+    <div className="glass">
       <h2>Sell Items</h2>
-      <input placeholder="Customer Name" value={customer} onChange={(e) => setCustomer(e.target.value)} />
+      <input
+        placeholder="Customer Name"
+        value={customer}
+        onChange={(e) => setCustomer(e.target.value)}
+      />
+      <select value={item} onChange={(e) => setItem(e.target.value)}>
+        <option value="">Select Item</option>
+        {inventory.map((i) => (
+          <option key={i.id} value={i.name}>
+            {i.name} (₹{i.price})
+          </option>
+        ))}
+      </select>
+      <input
+        type="number"
+        placeholder="Quantity"
+        value={qty}
+        onChange={(e) => setQty(e.target.value)}
+      />
+      <button className="btn-primary" onClick={handleSell}>
+        Sell
+      </button>
 
-      <h4>Select Items:</h4>
-      {items.map((i) => (
-        <button key={i.id} onClick={() => handleAddItem(i)}>
-          {i.name} (₹{i.price})
-        </button>
-      ))}
-
-      <button className="btn-green" onClick={handleSell}>Sell</button>
-
-      {bill && <BillCard bill={bill} />}
+      <h3 style={{ marginTop: "20px" }}>Sales Records</h3>
+      <table className="table">
+        <thead>
+          <tr>
+            <th>Customer</th>
+            <th>Item</th>
+            <th>Qty</th>
+            <th>Total (₹)</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          {sales.length > 0 ? (
+            sales.map((s) => (
+              <tr key={s.id}>
+                <td>{s.customerName}</td>
+                <td>{s.item}</td>
+                <td>{s.quantity}</td>
+                <td>{s.total}</td>
+                <td>{s.date}</td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td colSpan="5">No sales yet</td>
+            </tr>
+          )}
+        </tbody>
+      </table>
     </div>
   );
 }
 
-export default Sell;
 
 
