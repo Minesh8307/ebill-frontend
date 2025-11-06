@@ -9,7 +9,7 @@ import Sell from "./pages/Sell";
 import Navbar from "./components/Navbar";
 import { AuthProvider } from "./context/AuthContext";
 
-function App() {
+export default function App() {
   return (
     <AuthProvider>
       <Router>
@@ -27,6 +27,5 @@ function App() {
   );
 }
 
-export default App;
 
 
