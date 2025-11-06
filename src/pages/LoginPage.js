@@ -3,9 +3,10 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../config/firebaseConfig";
 import { Link, useNavigate } from "react-router-dom";
 
-function LoginPage() {
+export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
@@ -14,24 +15,35 @@ function LoginPage() {
       await signInWithEmailAndPassword(auth, email, password);
       navigate("/dashboard");
     } catch (err) {
-      alert(err.message);
+      setError(err.message);
     }
   };
 
   return (
-    <div className="auth-container glass">
+    <div className="glass">
       <h2>Login</h2>
+      {error && <p style={{ color: "red" }}>{error}</p>}
       <form onSubmit={handleLogin}>
-        <input type="email" placeholder="Email" onChange={(e) => setEmail(e.target.value)} required />
-        <input type="password" placeholder="Password" onChange={(e) => setPassword(e.target.value)} required />
-        <button className="btn-primary">Login</button>
+        <input
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
+        <button type="submit" className="btn-primary">Login</button>
       </form>
-      <p>New user? <Link to="/signup">Create account</Link></p>
+      <p>New user? <Link to="/signup">Create an account</Link></p>
     </div>
   );
 }
-
-export default LoginPage;
 
 
 
