@@ -2,7 +2,7 @@ import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
-function Navbar() {
+export default function Navbar() {
   const { currentUser, logout } = useAuth();
   const navigate = useNavigate();
 
@@ -33,6 +33,5 @@ function Navbar() {
   );
 }
 
-export default Navbar;
 
 
