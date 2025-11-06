@@ -1,19 +1,16 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-function Dashboard() {
+export default function Dashboard() {
   return (
-    <div className="dashboard glass">
+    <div className="glass">
       <h2>Dashboard</h2>
-      <p>Welcome to eBILL — select a section:</p>
-      <div className="card-container">
-        <Link to="/sell" className="big-card blue">🛒 Sell</Link>
-        <Link to="/inventory" className="big-card green">📦 Inventory</Link>
+      <div className="home-buttons">
+        <Link to="/sell" className="btn-primary">Sell</Link>
+        <Link to="/inventory" className="btn-green">Inventory</Link>
       </div>
     </div>
   );
 }
-
-export default Dashboard;
 
 
