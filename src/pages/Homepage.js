@@ -3,7 +3,8 @@ import { Link } from "react-router-dom";
 
 export default function Homepage() {
   return (
-    <div className="homepage glass">
+    // This 'glass' class is from your new styles.css
+    <div className="homepage glass"> 
       <h1>Welcome to <span className="highlight">eBILL</span></h1>
       <p>Smart online billing and inventory management system.</p>
       <div className="home-buttons">
