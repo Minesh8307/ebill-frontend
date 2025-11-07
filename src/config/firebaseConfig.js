@@ -3,12 +3,12 @@ import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDXghrr3ORDBParyAmHXLckmYxdrRDAVAI",
-  authDomain: "ebill-3a434.firebaseapp.com",
-  projectId: "ebill-3a434",
-  storageBucket: "ebill-3a434.appspot.com",
-  messagingSenderId: "680611220311",
-  appId: "1:680611220311:web:0bd47fb6e0081e83bb4c12"
+  apiKey: "AIzaSyCIgizGlyx4PKQDKm1ITBrDnYgn9fZnU-w",
+  authDomain: "ebill-1e73a.firebaseapp.com",
+  projectId: "ebill-1e73a",
+  storageBucket: "ebill-1e73a.firebasestorage.app",
+  messagingSenderId: "727485237469",
+  appId: "1:727485237469:web:486044d1fb2996df91b334"
 };
 
 const app = initializeApp(firebaseConfig);
